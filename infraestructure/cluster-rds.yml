@@ -73,8 +73,8 @@ Resources:
        Description: !Ref 'AWS::StackName'
        Family: aurora-mysql5.7
        Parameters:
-         apg_plan_mgmt.max_databases: 10
-
+        max_connections: 90
+        
   DBInstance:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -93,7 +93,7 @@ Resources:
        Description: !Ref 'AWS::StackName'
        Family: aurora-mysql5.7
        Parameters:
-         apg_plan_mgmt.max_databases: 10
+         max_connections: 90
 
   DatabaseCluster:
     Type: AWS::RDS::DBCluster
