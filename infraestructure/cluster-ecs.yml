@@ -133,7 +133,7 @@ Resources:
             - 'Fn::ImportValue': !Sub ${ClusterName}InternalAccessSecurityGroup
           SubnetId:
             'Fn::ImportValue': !Sub ${ClusterName}PublicSubnet1
-      ImageId: 'ami-00f9f4069d04c0c6e'
+      ImageId: 'ami-03016b62a0652b2d7'
       InstanceType: !Ref BastionInstanceType
       KeyName: !Ref KeyName
       IamInstanceProfile: !Ref EC2InstanceProfile
