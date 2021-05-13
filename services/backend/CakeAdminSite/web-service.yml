@@ -108,7 +108,7 @@ Parameters:
     Type: String
     Default: "DEV"
 
-  APP_FOLDER:
+  AppFolder:
     Type: String
     Default: "CakeAdminSite"
 
@@ -123,7 +123,7 @@ Resources:
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub ${ProjectName}/${StageEnv}/${APP_FOLDER}
+      LogGroupName: !Sub ${ProjectName}/${StageEnv}/${AppFolder}
 
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -218,13 +218,13 @@ Resources:
   Task:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Sub ${APP_FOLDER}-${StageEnv}-web-task
+      Family: !Sub ${AppFolder}-${StageEnv}-web-task
       NetworkMode: !Ref ContainerNetworkMode
       ExecutionRoleArn: !Ref EcsExecutionRoleArn
       Cpu: !Ref ContainerVirtualCPUs
       Memory: !Ref ContainerMemoryMin
       ContainerDefinitions:
-        - Name: !Sub ${APP_FOLDER}-${StageEnv}-web-container
+        - Name: !Sub ${AppFolder}-${StageEnv}-web-container
           Image: !Sub ${DockerImageVersion}
           PortMappings:
             - ContainerPort: !Ref ContainerPort
@@ -241,7 +241,7 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Sub ${ProjectName}/${StageEnv}/${APP_FOLDER}
+              awslogs-group: !Sub ${ProjectName}/${StageEnv}/${AppFolder}
               awslogs-stream-prefix: /service
               awslogs-region: !Ref AWS::Region
           Privileged: true
@@ -252,7 +252,7 @@ Resources:
   Service:
     Type: AWS::ECS::Service
     Properties:
-      ServiceName: !Sub ${APP_FOLDER}-${StageEnv}-web-service
+      ServiceName: !Sub ${AppFolder}-${StageEnv}-web-service
       Cluster:
         "Fn::ImportValue": !Sub ${ClusterName}ECSCluster
       Role: !If
@@ -267,7 +267,7 @@ Resources:
         MinimumHealthyPercent: !If [hasOnlyOneTask, 0, 50]
         MaximumPercent: 100
       LoadBalancers:
-        - ContainerName: !Sub ${APP_FOLDER}-${StageEnv}-web-container
+        - ContainerName: !Sub ${AppFolder}-${StageEnv}-web-container
           ContainerPort: !Ref ContainerPort
           TargetGroupArn: !Ref TargetGroup
       HealthCheckGracePeriodSeconds: !Ref AlbHealthCheckStartPeriod

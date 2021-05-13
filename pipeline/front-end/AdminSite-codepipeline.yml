@@ -226,7 +226,7 @@ Resources:
           - Name: ENV
             Value: !Ref Environment
           - Name: REPOSITORY_URI
-            Value: ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
+            Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -288,7 +288,7 @@ Resources:
               RunOrder: 1
         - Name: DeployApp
           Actions:  
-            - Name: CreateAPIChangeSet
+            - Name: CreateWEBChangeSet
               ActionTypeId:
                 Category: Deploy
                 Owner: AWS
@@ -315,14 +315,14 @@ Resources:
                     "StageEnv": "${Environment}",
                     "ContainerPort": "${ContainerPort}",
                     "AlbHealthCheckPath": "${ApiHealthCheckPath}",
-                    "SiteTgPriority": "${SiteTgPriority}"
+                    "SiteTgPriority": "${SiteTgPriority}",
                     "AppFolder": "${ServiceFolder}"
                   }
               RunOrder: 1
               InputArtifacts:
                 - Name: Infra
                 - Name: BuildOutput
-            - Name: ExecuteAPIChangeSet
+            - Name: ExecuteWEBChangeSet
               ActionTypeId:
                 Category: Deploy
                 Owner: AWS
