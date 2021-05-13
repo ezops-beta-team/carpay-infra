@@ -1,8 +1,5 @@
 version: 0.2
 env:
-  parameter-store:
-    DEPLOY_BUCKET: "/ECS-CLUSTER/${ClusterName}/${ProjectName}/AWS_S3"
-    DISTRIBUTION_ID: "/ECS-CLUSTER/${ClusterName}/${ProjectName}/DISTRIBUTION_ID"
   secrets-manager:
     CAKE_ENV_FIRST_NAME_FOR_TESTS: "CARPAY/DEV:CAKE_ENV_FIRST_NAME_FOR_TESTS"
     CAKE_ENV_LAST_NAME_FOR_TESTS: "CARPAY/DEV:CAKE_ENV_LAST_NAME_FOR_TESTS"
