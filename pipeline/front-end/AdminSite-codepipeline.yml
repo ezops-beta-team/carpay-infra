@@ -16,6 +16,9 @@ Parameters:
   InfraBranch:
     Type: String
 
+  InfraOwner:
+    Type: String
+
   GitHubToken:
     Type: String
 
@@ -39,7 +42,7 @@ Parameters:
     Type: Number
 
   ClusterName:
-    Default: dev-envs
+    Default: carpay-dev
     Type: String
 
   CertificateArn:
@@ -61,16 +64,8 @@ Parameters:
   
   Environment:
     Type: String
-    Default: SANDBOX3
+    Default: dev
 
-  SidekiqPrimaryWorkerTasksNumber:
-    Type: String
-    Default: 1
-  
-  RailsEnv:
-    Type: String
-    Default: "sandbox3"
-  
   SiteTgPriority:
     Type: String
     Default: 104
@@ -272,7 +267,7 @@ Resources:
                 Version: 1
                 Provider: GitHub
               Configuration:
-                Owner: !Ref GitHubOwner
+                Owner: !Ref InfraOwner
                 Repo: !Ref InfraRepo
                 Branch: !Ref InfraBranch
                 OAuthToken: !Ref GitHubToken
@@ -296,21 +291,6 @@ Resources:
                 - Name: Infra
               OutputArtifacts:
                 - Name: BuildOutput
-              RunOrder: 1
-        - Name: DatabaseMigration
-          Actions:
-            - Name: DatabaseMigration
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Version: 1
-                Provider: CodeBuild
-              Configuration:
-                ProjectName: !Ref CodeBuildMigrationProject
-                PrimarySource: Infra
-              InputArtifacts:
-                - Name: App
-                - Name: Infra
               RunOrder: 1
         - Name: DeployApp
           Actions:  
