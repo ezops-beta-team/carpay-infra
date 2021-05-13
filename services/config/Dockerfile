@@ -34,4 +34,4 @@ RUN chmod +x ./devops/entrypoint.sh
 
 EXPOSE 80
 
-CMD ["/home/cpsandbox/CarPayCakeSites/entrypoint.sh"]
+CMD ["/home/cpsandbox/CarPayCakeSites/devops/entrypoint.sh"]
