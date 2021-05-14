@@ -50,8 +50,8 @@ Resources:
      GroupDescription: Enables RDS access
      SecurityGroupIngress:
        - IpProtocol: tcp
-         FromPort: 5432
-         ToPort: 5432
+         FromPort: 3306
+         ToPort: 3306
          CidrIp: !Sub ${CidrIp}/16
        - IpProtocol: -1
          FromPort: 0
@@ -79,7 +79,7 @@ Resources:
     Type: AWS::RDS::DBInstance
     Properties:
       Engine: aurora-mysql
-      EngineVersion: 5.7.12
+      EngineVersion: 5.7.mysql_aurora.2.08.2
       DBClusterIdentifier: !Ref DatabaseCluster
       DBInstanceClass: !Ref DBInstanceType
       DBSubnetGroupName: !Ref DBSubnetGroup
@@ -99,7 +99,7 @@ Resources:
     Type: AWS::RDS::DBCluster
     Properties:
       Engine: aurora-mysql
-      EngineVersion: 5.7.12
+      EngineVersion: 5.7.mysql_aurora.2.08.2
       SnapshotIdentifier: !If [dbHasSnapshot, !Ref DBSnapshotName, !Ref 'AWS::NoValue']
       MasterUsername: !If [dbHasSnapshot, !Ref 'AWS::NoValue', !Sub '{{resolve:ssm:/ECS-CLUSTER/${ClusterName}/RDS_ROOT_USERNAME:1}}']
       MasterUserPassword: !If [dbHasSnapshot, !Ref 'AWS::NoValue', !Sub '{{resolve:ssm-secure:/ECS-CLUSTER/${ClusterName}/RDS_ROOT_PASSWORD:1}}']
@@ -108,7 +108,7 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroup
       BackupRetentionPeriod: !If [dbHasAutomaticBackup, 35, 0]
       DBClusterParameterGroupName: !Ref DBClusterParameterGroup
-      Port: '5432'
+      Port: '3306'
 
   SsmRdsAddress:
    Type: AWS::SSM::Parameter
@@ -141,12 +141,12 @@ Resources:
      GroupDescription: Enables RDS access
      SecurityGroupIngress:
        - IpProtocol: tcp
-         FromPort: 5432
-         ToPort: 5432
+         FromPort: 3306
+         ToPort: 3306
          CidrIp: !Sub ${CidrIp}/16
        - IpProtocol: tcp
-         FromPort: 5432
-         ToPort: 5432
+         FromPort: 3306
+         ToPort: 3306
          CidrIp: 172.20.0.0/20
 
 
