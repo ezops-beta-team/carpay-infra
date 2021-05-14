@@ -1,4 +1,4 @@
-FROM php:7.3-fpm-alpine3.8
+FROM php:7.4-fpm-alpine3.8
 
 RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx freetype-dev libjpeg-turbo-dev libpng-dev
 
@@ -6,7 +6,7 @@ RUN apk add --no-cache php-sqlite3 pdftk
 
 RUN docker-php-ext-install pdo pdo_mysql 
 
-RUN docker-php-ext-configure intl && docker-php-ext-install intl && docker-php-ext-install gd
+RUN docker-php-ext-configure intl && docker-php-ext-install intl  && docker-php-ext-install gd
 
 RUN mkdir -p /run/nginx 
 
@@ -33,5 +33,3 @@ RUN cp ./devops/php.ini $PHP_INI_DIR/php.ini
 RUN chmod +x ./devops/entrypoint.sh
 
 EXPOSE 80
-
-CMD ["/home/cpsandbox/CarPayCakeSites/devops/entrypoint.sh"]

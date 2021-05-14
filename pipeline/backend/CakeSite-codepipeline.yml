@@ -60,7 +60,7 @@ Parameters:
     
   ServiceFolder:
     Type: String
-    Default: billing-api
+    Default: CakeAdminSites
   
   Environment:
     Type: String
@@ -68,7 +68,7 @@ Parameters:
 
   SiteTgPriority:
     Type: String
-    Default: 104
+    Default: 20
     
 
 Resources:
