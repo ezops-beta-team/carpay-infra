@@ -168,6 +168,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Build Docker image...
+      - docker pull $REPOSITORY_URI:latest
       - docker build --cache-from  $REPOSITORY_URI:latest --build-arg APP_FOLDER=$AppFolder --tag $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
