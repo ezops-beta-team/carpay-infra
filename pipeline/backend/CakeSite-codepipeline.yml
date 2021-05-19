@@ -216,7 +216,7 @@ Resources:
           - 'Fn::ImportValue': !Sub ${ClusterName}InternalAccessSecurityGroup
       Environment:
         ComputeType: "BUILD_GENERAL1_SMALL"
-        Image: "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+        Image: "aws/codebuild/docker:17.09.0"
         Type: "LINUX_CONTAINER"
         EnvironmentVariables:
           - Name: AWS_DEFAULT_REGION
@@ -229,6 +229,10 @@ Resources:
             Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
           - Name: AppFolder
             Value: !Ref ServiceFolder
+      Cache:
+        Type: LOCAL
+        Modes:
+          - LOCAL_DOCKER_LAYER_CACHE
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline

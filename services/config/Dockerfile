@@ -1,6 +1,6 @@
 FROM php:7.4-fpm-alpine3.13
 
-ARG APP_FOLDER=CakeAdminSite
+ARG APP_FOLDER
 
 RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx \
     freetype-dev libjpeg-turbo-dev libpng-dev php-sqlite3 php7-pear php7-dev gcc musl-dev make \
