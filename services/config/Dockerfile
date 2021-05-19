@@ -27,6 +27,7 @@ RUN mkdir -p /opt/cpanel/composer/bin/ \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/opt/cpanel/composer/bin/ --filename=composer \
     && mv ./devops/nginx.conf /etc/nginx/conf.d/default.conf \
     && mkdir -p /etc/nginx/conf.ext \
+    && php composer_install_AllSites.php \
     && cp ./devops/php.ini $PHP_INI_DIR/php.ini \
     && chmod +x ./entrypoint.sh
 
