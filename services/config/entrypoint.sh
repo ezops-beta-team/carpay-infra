@@ -21,13 +21,6 @@ ln -s ../../../../CakeCommon/src/Controller/Component/Common $APP_FOLDER/src/Con
 ln -s ../../../CakeCommon/src/Middleware/Common $APP_FOLDER/src/Middleware/Common
 ln -s ../../../../CakeCommon/src/Template/Element/Common $APP_FOLDER/src/Template/Element/Common
 
-# if [ "$LOCAL_COMPOSE_ENV" == 'true' ] && [ "$APP_FOLDER" == 'CakeDealerSite' ]
-# then
-#     php composer_install_AllSites.php
-# fi
-
-php composer_install_Single.php "$APP_FOLDER"
-
 nginx
 
 php-fpm

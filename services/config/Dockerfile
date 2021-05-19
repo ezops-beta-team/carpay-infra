@@ -1,5 +1,7 @@
 FROM php:7.4-fpm-alpine3.13
 
+ARG APP_FOLDER=CakeAdminSite
+
 RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx \
     freetype-dev libjpeg-turbo-dev libpng-dev php-sqlite3 php7-pear php7-dev gcc musl-dev make \
     && pecl install xdebug-2.8.1 redis-5.1.1 scrypt-1.4.2 \
@@ -27,7 +29,7 @@ RUN mkdir -p /opt/cpanel/composer/bin/ \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/opt/cpanel/composer/bin/ --filename=composer \
     && mv ./devops/nginx.conf /etc/nginx/conf.d/default.conf \
     && mkdir -p /etc/nginx/conf.ext \
-    && php composer_install_AllSites.php \
+    && php composer_install_Single.php $APP_FOLDER \
     && cp ./devops/php.ini $PHP_INI_DIR/php.ini \
     && chmod +x ./entrypoint.sh
 
