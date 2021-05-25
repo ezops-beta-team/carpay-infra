@@ -2,7 +2,7 @@ FROM php:7.4-fpm-alpine3.13
 
 ARG APP_FOLDER
 
-RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx \
+RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx php-bcmath \
     freetype-dev libjpeg-turbo-dev libpng-dev php-sqlite3 php7-pear php7-dev gcc musl-dev make \
     && pecl install xdebug-2.8.1 redis-5.1.1 scrypt-1.4.2 \
     && docker-php-ext-install pdo pdo_mysql && docker-php-ext-configure intl && docker-php-ext-install intl && docker-php-ext-install gd \
@@ -11,7 +11,8 @@ RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    && echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && wget -O /usr/local/bin/phpunit https://phar.phpunit.de/phpunit-6.phar && chmod +x /usr/local/bin/phpunit
 
 RUN mkdir -p /run/nginx
 

@@ -79,7 +79,22 @@ Resources:
   Repository:
     Type: AWS::ECR::Repository
     DeletionPolicy: Delete
-    Properties: 
+    Properties:
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+            {
+              "rulePriority": 1,
+              "description": "Only keep 100 images",
+              "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 100
+              },
+              "action": { "type": "expire" }
+            }]
+          }
       RepositoryName: !Sub ${ProjectName}
 
   CloudFormationExecutionRole:
