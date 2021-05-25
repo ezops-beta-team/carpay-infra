@@ -81,7 +81,6 @@ phases:
     commands:
       - echo Installing tools
       - sh services/config/sed_env.sh
-      - cat $CODEBUILD_SRC_DIR_App/.cake-env.php
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - START_TIME=$(echo $CODEBUILD_START_TIME | cut -c 1-7)
