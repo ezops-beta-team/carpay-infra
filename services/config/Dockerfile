@@ -41,8 +41,7 @@ RUN mkdir -p /opt/cpanel/composer/bin/ \
     && mv ./devops/nginx.conf /etc/nginx/conf.d/default.conf \
     && mkdir -p /etc/nginx/conf.ext \
     && cp ./devops/php.ini $PHP_INI_DIR/php.ini \
-    && chmod +x ./devops/entrypoint.sh \ 
-    && chmod +x ./devops/restore.sh
+    && chmod +x ./entrypoint.sh
 
 EXPOSE 80 9000
 
