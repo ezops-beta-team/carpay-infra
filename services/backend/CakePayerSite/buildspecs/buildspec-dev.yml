@@ -102,7 +102,7 @@ phases:
       - docker pull $REPOSITORY_URI:latest
       - > 
         docker build --cache-from  $REPOSITORY_URI:latest --build-arg APP_FOLDER=$AppFolder --build-arg DEFAULT_REGION=$AWS_DEFAULT_REGION
-        --build-arg AWS_ACCESS_KEY_ID=AWS_ACCESS --build-arg AWS_SECRET_ACCESS_KEY=AWS_SECRET --tag $REPOSITORY_URI:latest .
+        --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET --tag $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
