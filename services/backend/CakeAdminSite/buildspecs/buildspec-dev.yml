@@ -76,6 +76,8 @@ env:
     CAKE_ENV_TWILIO_USERNAME: "CARPAY/DEV:CAKE_ENV_TWILIO_USERNAME"
     CAKE_ENV_TWILIO_PASSWORD: "CARPAY/DEV:CAKE_ENV_TWILIO_PASSWORD"
     CAKE_ENV_TWILIO_BASE_PHONE_NUMBER: "CARPAY/DEV:CAKE_ENV_TWILIO_BASE_PHONE_NUMBER"
+    AWS_SECRET: "CARPAY/DEV:AWS_SECRET_KEY"
+    AWS_ACCESS: "CARPAY/DEV:AWS_ACCESS_KEY"
 phases:
   install:
     commands:
@@ -89,13 +91,16 @@ phases:
     commands:
       - cp ./services/config/Dockerfile $CODEBUILD_SRC_DIR_App/Dockerfile
       - cp ./services/config/entrypoint.sh $CODEBUILD_SRC_DIR_App/entrypoint.sh
+      - cp ./services/config/credentials.csv $CODEBUILD_SRC_DIR_App/cretentials.csv
       - cd $CODEBUILD_SRC_DIR_App
   build:
     commands:
       - echo Build started on `date`
       - echo Build Docker image...
       - docker pull $REPOSITORY_URI:latest
-      - docker build --cache-from $REPOSITORY_URI:latest --build-arg APP_FOLDER=$AppFolder --tag $REPOSITORY_URI:latest .
+      - > 
+        docker build --cache-from  $REPOSITORY_URI:latest --build-arg APP_FOLDER=$AppFolder --build-arg DEFAULT_REGION=$AWS_DEFAULT_REGION
+        --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET --tag $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
