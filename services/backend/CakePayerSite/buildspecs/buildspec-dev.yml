@@ -82,6 +82,8 @@ phases:
   install:
     commands:
       - echo Installing tools
+      - sed -i "s|key_value|${AWS_}|g" ./services/config/credentials.csv
+      - sed -i "s|key_value|${AWS_}|g" ./services/config/credentials.csv
       - sh services/config/sed_env.sh
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
@@ -91,6 +93,7 @@ phases:
     commands:
       - cp ./services/config/Dockerfile $CODEBUILD_SRC_DIR_App/Dockerfile
       - cp ./services/config/entrypoint.sh $CODEBUILD_SRC_DIR_App/entrypoint.sh
+      - cp ./services/config/credentials.csv $CODEBUILD_SRC_DIR_App/cretentials.csv
       - cd $CODEBUILD_SRC_DIR_App
   build:
     commands:
