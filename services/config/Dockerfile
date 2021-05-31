@@ -41,7 +41,9 @@ RUN mkdir -p /opt/cpanel/composer/bin/ \
     && mv ./devops/nginx.conf /etc/nginx/conf.d/default.conf \
     && mkdir -p /etc/nginx/conf.ext \
     && cp ./devops/php.ini $PHP_INI_DIR/php.ini \
-    && aws configure import --csv file://credentials.csv\
+    && aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID \
+    && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY \
+    && aws configure set default.region $DEFAULT_REGION \
     && chmod +x ./entrypoint.sh
 
 EXPOSE 80 9000
