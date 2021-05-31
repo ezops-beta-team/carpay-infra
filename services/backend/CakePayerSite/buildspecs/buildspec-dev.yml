@@ -82,8 +82,6 @@ phases:
   install:
     commands:
       - echo Installing tools
-      - sed -i "s|key_value|${AWS_}|g" ./services/config/credentials.csv
-      - sed -i "s|key_value|${AWS_}|g" ./services/config/credentials.csv
       - sh services/config/sed_env.sh
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
