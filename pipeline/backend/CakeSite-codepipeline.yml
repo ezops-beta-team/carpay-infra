@@ -340,7 +340,7 @@ Resources:
                     "ContainerPort": "${ContainerPort}",
                     "AlbHealthCheckPath": "${ApiHealthCheckPath}",
                     "SiteTgPriority": "${SiteTgPriority}",
-                    "AppFolder": "${ServiceFolder}"
+                    "AppFolder": "${ServiceFolder}",
                     "HostName": "${HostName}"
                   }
               RunOrder: 1
