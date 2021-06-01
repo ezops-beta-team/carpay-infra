@@ -70,6 +70,9 @@ Parameters:
     Type: String
     Default: 20
     
+  HostName:
+    Type: String
+    Default: "dev01.carpay.com"
 
 Resources:
   ArtifactBucket: 
@@ -338,6 +341,7 @@ Resources:
                     "AlbHealthCheckPath": "${ApiHealthCheckPath}",
                     "SiteTgPriority": "${SiteTgPriority}",
                     "AppFolder": "${ServiceFolder}"
+                    "HostName": "${HostName}"
                   }
               RunOrder: 1
               InputArtifacts:

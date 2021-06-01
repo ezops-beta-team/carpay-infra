@@ -112,6 +112,10 @@ Parameters:
     Type: String
     Default: "CakeAdminSite"
 
+  HostName:
+    Type: String
+    Default: "dev01.carpay.com"
+
   
 Conditions:
   hasSSL: !Equals [!Ref HasHTTPS, "true"]
@@ -237,7 +241,7 @@ Resources:
               !Ref "AWS::NoValue",
             ]
           Cpu: !Ref ContainerVirtualCPUs
-          Hostname: !Sub Application.${ClusterName}
+          Hostname: !Sub ${HostName}
           LogConfiguration:
             LogDriver: awslogs
             Options:
