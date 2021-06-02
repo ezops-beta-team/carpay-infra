@@ -1,9 +1,5 @@
 #!/bin/bash
 
-aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-aws configure set default.region $DEFAULT_REGION
-
 sed -i "s|ARG_APP_FOLDER|$APP_FOLDER|g" /etc/nginx/conf.d/default.conf
 
 rm -r $APP_FOLDER/plugins $APP_FOLDER/src/CommonLib $APP_FOLDER/src/Database $APP_FOLDER/src/Log $APP_FOLDER/src/Model 
