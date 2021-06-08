@@ -5,10 +5,10 @@ ARG AWS_ACCESS_KEY_ID
 ARG AWS_SECRET_ACCESS_KEY
 ARG DEFAULT_REGION
 
-RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx php-bcmath pcre-dev ${PHPIZE_DEPS} \
+RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx pcre-dev ${PHPIZE_DEPS} \
     freetype-dev libjpeg-turbo-dev libpng-dev php-sqlite3 php7-pear php7-dev gcc musl-dev make \
     && pecl install xdebug-2.8.1 redis-5.1.1 scrypt-1.4.2 \
-    && docker-php-ext-install pdo pdo_mysql && docker-php-ext-configure intl && docker-php-ext-install intl && docker-php-ext-install gd \
+    && docker-php-ext-install pdo pdo_mysql bcmath && docker-php-ext-configure intl && docker-php-ext-install intl && docker-php-ext-install gd \
     && docker-php-ext-enable redis xdebug scrypt \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
