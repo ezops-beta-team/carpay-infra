@@ -192,7 +192,7 @@ Resources:
           Command:
             - bash
             - "-c"
-            - "(./entrypoint.sh) && (/usr/sbin/crond)"
+            - "(/usr/sbin/crond) && (./entrypoint.sh)"
           Environment:
             - Name: APP_FOLDER
               Value: !Ref AppFolder
