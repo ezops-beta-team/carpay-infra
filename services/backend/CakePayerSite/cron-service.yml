@@ -182,11 +182,17 @@ Resources:
             ]
           Cpu: !Ref ContainerVirtualCPUs
           Hostname: !Sub ${HostName}
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Sub ${ProjectName}/${StageEnv}/${AppFolder}/CRON-SERVICE
+              awslogs-stream-prefix: /service
+              awslogs-region: !Ref AWS::Region
           Privileged: true
-          command:
+          Command:
             - bash
             - "-c"
-            - "(crond)"
+            - "(./entrypoint.sh) && (/usr/sbin/crond)"
           Environment:
             - Name: APP_FOLDER
               Value: !Ref AppFolder
