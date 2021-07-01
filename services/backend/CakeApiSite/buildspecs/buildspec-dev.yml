@@ -91,6 +91,10 @@ phases:
     commands:
       - cp ./services/config/Dockerfile $CODEBUILD_SRC_DIR_App/Dockerfile
       - cp ./services/config/entrypoint.sh $CODEBUILD_SRC_DIR_App/entrypoint.sh
+      - cp ./services/config/crontab $CODEBUILD_SRC_DIR_App/crontab
+      - cp ./services/config/nginx.conf $CODEBUILD_SRC_DIR_App/nginx.conf
+      - cp ./services/config/php.ini $CODEBUILD_SRC_DIR_App/php.ini
+      - cp ./services/config/.cake-env.php $CODEBUILD_SRC_DIR_App/.cake-env.php
       - cd $CODEBUILD_SRC_DIR_App
   build:
     commands:
