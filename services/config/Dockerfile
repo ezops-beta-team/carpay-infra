@@ -40,9 +40,9 @@ RUN crontab -u root ./crontab
 
 RUN mkdir -p /opt/cpanel/composer/bin/ \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/opt/cpanel/composer/bin/ --filename=composer \
-    && mv ./devops/nginx.conf /etc/nginx/conf.d/default.conf \
+    && mv ./nginx.conf /etc/nginx/conf.d/default.conf \
     && mkdir -p /etc/nginx/conf.ext \
-    && cp ./devops/php.ini $PHP_INI_DIR/php.ini \
+    && cp ./php.ini $PHP_INI_DIR/php.ini \
     && aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID \
     && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY \
     && aws configure set default.region $DEFAULT_REGION \
