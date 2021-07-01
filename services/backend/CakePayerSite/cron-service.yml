@@ -126,7 +126,7 @@ Resources:
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub ${ProjectName}/${StageEnv}/${AppFolder}
+      LogGroupName: !Sub ${ProjectName}/${StageEnv}/${AppFolder}/CRON-SERVICE
 
   EcsExecutionRoleArn:
     Type: AWS::IAM::Role
