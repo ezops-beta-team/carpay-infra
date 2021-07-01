@@ -197,10 +197,6 @@ Resources:
       ServiceName: !Sub ${AppFolder}-${StageEnv}-cron-service
       Cluster:
         "Fn::ImportValue": !Sub ${ClusterName}ECSCluster
-      Role: !If
-        - hasServiceDiscovery
-        - !Ref AWS::NoValue
-        - 'Fn::ImportValue': !Sub ${ClusterName}ECSRoleArn
       TaskDefinition: !Ref Task
       DesiredCount: !Ref EcsTasksNumber
       PlacementConstraints:
