@@ -1,0 +1,247 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sets Up Service Web
+Parameters:
+  ClusterName:
+    Type: String
+    Default: Application
+
+  EcsTasksNumber:
+    Type: String
+    Default: 1
+
+  ContainerPort:
+    Type: String
+    Default: 3000
+
+  ContainerVirtualCPUs:
+    Type: String
+    Default: 1
+
+  ContainerMemoryMin:
+    Type: String
+    Default: 4096
+
+  ContainerMemoryMax:
+    Type: String
+    Default: LIMITLESS
+
+  DockerImageVersion:
+    Type: String
+
+  HostedZoneName:
+    Type: String
+   
+  CertificateArn:
+    Type: String
+
+  AlbHealthCheckInterval:
+    Type: String
+    Default: 30
+
+  AlbHealthCheckPath:
+    Type: String
+    Default: /v1/health
+
+  AlbHealthCheckTimeout:
+    Type: String
+    Default: 10
+
+  AlbHealthCheckHealthyThreshold:
+    Type: String
+    Default: 10
+
+  AlbHealthCheckUnhealthyThreshold:
+    Type: String
+    Default: 10
+
+  SiteTgPriority:
+    Type: String
+    Default: 10
+
+  LoadBalancerCname:
+    Type: String
+
+  AlbHealthCheckStartPeriod:
+    Type: String
+    Default: 30
+
+  ContainerNetworkMode:
+    Type: String
+    Default: bridge
+
+  ContainerHealthCheckInterval:
+    Type: String
+    Default: 30
+
+  ContainerHealthCheckTimeout:
+    Type: String
+    Default: 10
+
+  ContainerHealthCheckRetries:
+    Type: String
+    Default: 5
+
+  ContainerHealthCheckStartPeriod:
+    Type: String
+    Default: 200
+
+  EcsTypePlacementStrategy:
+    Type: String
+    Default: binpack
+
+  EcsFieldPlacementStrategy:
+    Type: String
+    Default: cpu
+
+  HasHTTPS:
+    Type: String
+    Default: true
+
+  ProjectName:
+    Type: String
+  
+  StageEnv:
+    Type: String
+    Default: "DEV"
+  
+  SECRET:
+    Type: String
+    Default: "DEV"
+
+  AppFolder:
+    Type: String
+    Default: "CakeAdminSite"
+
+  HostName:
+    Type: String
+    Default: "dev01.carpay.com"
+
+Conditions:
+  hasSSL: !Equals [!Ref HasHTTPS, "true"]
+  hasOnlyOneTask: !Equals [!Ref EcsTasksNumber, "1"]
+  containerHasMemoryLimit: !Not [!Equals [!Ref ContainerMemoryMax, "LIMITLESS"]]
+  hasServiceDiscovery: !Equals [!Ref ContainerNetworkMode, "awsvpc"]
+
+Resources:
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${ProjectName}/${StageEnv}/${AppFolder}
+
+  EcsExecutionRoleArn:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ExecutionRole-${ClusterName}-${ProjectName}-cron
+      Path: /
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: 
+              - 'ecs-tasks.amazonaws.com'
+            AWS:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+          Action:
+            - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: ECSTaskExecutionRolePolicy
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+                - 'ecs:*'
+                - 'ecr:*'
+                - 'ec2:*'
+                - 'logs:CreateLogStream'
+                - 'logs:PutLogEvents'
+                - 'ssm:GetParameters'
+                - 'secretsmanager:GetSecretValue'
+                - 'kms:Decrypt'
+              Resource: '*'
+
+  Task:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub ${AppFolder}-${StageEnv}-cron-task
+      NetworkMode: !Ref ContainerNetworkMode
+      ExecutionRoleArn: !Ref EcsExecutionRoleArn
+      Cpu: !Ref ContainerVirtualCPUs
+      Memory: !Ref ContainerMemoryMin
+      ContainerDefinitions:
+        - Name: !Sub ${AppFolder}-${StageEnv}-cron-container
+          Image: !Sub ${DockerImageVersion}
+          PortMappings:
+            - ContainerPort: !Ref ContainerPort
+              HostPort: !If [hasServiceDiscovery, !Ref ContainerPort, 0]
+          MemoryReservation: !Ref ContainerMemoryMin
+          Memory:
+            !If [
+              containerHasMemoryLimit,
+              !Ref ContainerMemoryMax,
+              !Ref "AWS::NoValue",
+            ]
+          Cpu: !Ref ContainerVirtualCPUs
+          Hostname: !Sub ${HostName}
+          Privileged: true
+          command:
+            - bash
+            - "-c"
+            - "(crond)"
+          Environment:
+            - Name: APP_FOLDER
+              Value: !Ref AppFolder
+
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: !Sub ${AppFolder}-${StageEnv}-cron-service
+      Cluster:
+        "Fn::ImportValue": !Sub ${ClusterName}ECSCluster
+      Role: !If
+        - hasServiceDiscovery
+        - !Ref AWS::NoValue
+        - 'Fn::ImportValue': !Sub ${ClusterName}ECSRoleArn
+      TaskDefinition: !Ref Task
+      DesiredCount: !Ref EcsTasksNumber
+      PlacementConstraints:
+        - Type: distinctInstance
+      DeploymentConfiguration:
+        MinimumHealthyPercent: !If [hasOnlyOneTask, 0, 50]
+        MaximumPercent: 100
+      PlacementStrategies:
+        - Type: !Sub ${EcsTypePlacementStrategy}
+          Field: !Sub ${EcsFieldPlacementStrategy}
+      NetworkConfiguration: !If
+        - hasServiceDiscovery
+        - AwsvpcConfiguration:
+            SecurityGroups:
+              - "Fn::ImportValue": !Sub ${ClusterName}InternalAccessSecurityGroup
+            Subnets:
+              - "Fn::ImportValue": !Sub ${ClusterName}PrivateSubnet1
+              - "Fn::ImportValue": !Sub ${ClusterName}PrivateSubnet2
+        - !Ref AWS::NoValue
+      ServiceRegistries: !If
+        - hasServiceDiscovery
+        - - RegistryArn: !Sub arn:aws:servicediscovery:${AWS::Region}:${AWS::AccountId}:service/${ServiceDiscoveryService}
+        - !Ref AWS::NoValue
+
+  ServiceDiscoveryService:
+    Condition: hasServiceDiscovery
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      Description: !Sub "${ClusterName}-ServiceDiscovery"
+      DnsConfig:
+        DnsRecords:
+          - Type: A
+            TTL: 5
+        NamespaceId:
+          "Fn::ImportValue": !Sub ${ClusterName}PrivateNameSpace
+      HealthCheckCustomConfig:
+        FailureThreshold: 2
+      Name: !Sub ${ProjectName}-cron
+Outputs:
+
+  serviceECS:
+    Value: !Ref Service
+    Export:
+      Name: !Sub ${ProjectName}-cron-serviceECS

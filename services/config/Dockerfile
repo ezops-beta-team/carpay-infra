@@ -5,7 +5,7 @@ ARG AWS_ACCESS_KEY_ID
 ARG AWS_SECRET_ACCESS_KEY
 ARG DEFAULT_REGION
 
-RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx pcre-dev ${PHPIZE_DEPS} \
+RUN apk add --no-cache openssl bash mysql-client nodejs npm g++ icu-dev nginx pcre-dev ${PHPIZE_DEPS} sysstat\
     freetype-dev libjpeg-turbo-dev libpng-dev php-sqlite3 php7-pear php7-dev gcc musl-dev make \
     && pecl install xdebug-2.8.1 redis-5.1.1 scrypt-1.4.2 \
     && docker-php-ext-install pdo pdo_mysql bcmath && docker-php-ext-configure intl && docker-php-ext-install intl && docker-php-ext-install gd \
@@ -36,6 +36,8 @@ WORKDIR /home/cpsandbox/versions/dev/CarPayCakeSites
 
 COPY --chown=www-data:www-data . /home/cpsandbox/versions/dev/CarPayCakeSites
 
+RUN crontab -u root ./crontab
+
 RUN mkdir -p /opt/cpanel/composer/bin/ \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/opt/cpanel/composer/bin/ --filename=composer \
     && mv ./devops/nginx.conf /etc/nginx/conf.d/default.conf \
@@ -45,7 +47,6 @@ RUN mkdir -p /opt/cpanel/composer/bin/ \
     && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY \
     && aws configure set default.region $DEFAULT_REGION \
     && chmod +x ./entrypoint.sh
-
 EXPOSE 80 9000
 
 CMD [ "./entrypoint.sh" ]
